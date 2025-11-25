@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inventory Management</title>
+  <title>Fishing Inventory Management</title>
   <style>
     * {
       box-sizing: border-box;
@@ -291,6 +291,89 @@
       border-color: #667eea;
     }
 
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .item-card {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 20px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .item-card:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .item-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .item-card-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+
+    .item-card-body {
+      margin-bottom: 15px;
+    }
+
+    .item-detail {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding: 8px 0;
+    }
+
+    .item-detail-label {
+      color: #888;
+      font-weight: 500;
+    }
+
+    .item-detail-value {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .item-description {
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    .item-card-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .item-card-actions .btn {
+      flex: 1;
+      text-align: center;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #888;
+      grid-column: 1 / -1;
+    }
+
     @media (max-width: 768px) {
       .actions {
         flex-direction: column;
@@ -303,13 +386,20 @@
       .form-grid {
         grid-template-columns: 1fr;
       }
+
+      .items-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>📦 Inventory Management</h1>
+    <h1>🎣 Rassen Kalastustarvike inventaario</h1>
     <p>Manage your sales items with ease</p>
+    <button id="confettiBtn" class="btn btn-confetti" style="margin-top: 15px; background-color: lightpink; color: #333; border: none; padding: 12px 25px; border-radius: 5px; font-size: 1rem; cursor: pointer; transition: all 0.3s;">
+      🎉 Celebrate!
+    </button>
   </header>
 
   <div class="container">
@@ -360,20 +450,7 @@
       <div class="search-box">
         <input type="text" id="searchInput" placeholder="🔍 Search items...">
       </div>
-      <div id="itemsContainer">
-        <table id="itemsTable">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Quantity</th>
-              <th>Price</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="itemsBody">
-          </tbody>
-        </table>
+      <div id="itemsContainer" class="items-grid">
       </div>
     </div>
   </div>
@@ -428,32 +505,44 @@
       }
     }
 
-    // Display items in table
+    // Display items in card layout
     function displayItems(itemsToDisplay) {
-      const tbody = document.getElementById('itemsBody');
+      const container = document.getElementById('itemsContainer');
       
       if (itemsToDisplay.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="5" class="empty-state">
-              <p>No items found. Add your first item above!</p>
-            </td>
-          </tr>
+        container.innerHTML = `
+          <div class="empty-state">
+            <p>No items found. Add your first item above!</p>
+          </div>
         `;
         return;
       }
 
-      tbody.innerHTML = itemsToDisplay.map(item => `
-        <tr>
-          <td><strong>${escapeHtml(item.name)}</strong></td>
-          <td>${escapeHtml(item.description || '-')}</td>
-          <td>${item.quantity}</td>
-          <td>$${Number(item.price).toFixed(2)}</td>
-          <td class="actions">
-            <button class="btn btn-primary btn-sm" onclick="openEditModal(${item.id})">Edit</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">Delete</button>
-          </td>
-        </tr>
+      container.innerHTML = itemsToDisplay.map(item => `
+        <div class="item-card">
+          <div class="item-card-header">
+            <h3 class="item-card-title">${escapeHtml(item.name)}</h3>
+          </div>
+          <div class="item-card-body">
+            ${item.description ? `<p class="item-description">${escapeHtml(item.description)}</p>` : ''}
+            <div class="item-detail">
+              <span class="item-detail-label">Quantity:</span>
+              <span class="item-detail-value">${item.quantity}</span>
+            </div>
+            <div class="item-detail">
+              <span class="item-detail-label">Price:</span>
+              <span class="item-detail-value">$${Number(item.price).toFixed(2)}</span>
+            </div>
+            <div class="item-detail">
+              <span class="item-detail-label">Total Value:</span>
+              <span class="item-detail-value">$${(item.quantity * item.price).toFixed(2)}</span>
+            </div>
+          </div>
+          <div class="item-card-actions">
+            <button class="btn btn-primary" onclick="openEditModal(${item.id})">✏️ Edit</button>
+            <button class="btn btn-danger" onclick="deleteItem(${item.id})">🗑️ Delete</button>
+          </div>
+        </div>
       `).join('');
     }
 
@@ -602,8 +691,77 @@
       }
     });
 
+    // Confetti button functionality
+    document.getElementById('confettiBtn').addEventListener('click', () => {
+      // Play Star Wars theme
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      
+      function playNote(frequency, startTime, duration, volume = 0.8) {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = frequency;
+        oscillator.type = 'triangle';
+        
+        gainNode.gain.setValueAtTime(0, startTime);
+        gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.01);
+        gainNode.gain.linearRampToValueAtTime(volume * 0.7, startTime + duration * 0.7);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+        
+        oscillator.start(startTime);
+        oscillator.stop(startTime + duration);
+      }
+      
+      const now = audioContext.currentTime;
+      const noteDuration = 0.3;
+      const shortNote = 0.15;
+      
+      // Star Wars main theme notes
+      playNote(392, now, noteDuration); // G
+      playNote(392, now + 0.35, noteDuration); // G
+      playNote(392, now + 0.7, noteDuration); // G
+      playNote(311.13, now + 1.05, shortNote); // Eb
+      playNote(466.16, now + 1.25, shortNote); // Bb
+      playNote(392, now + 1.45, noteDuration); // G
+      playNote(311.13, now + 1.8, shortNote); // Eb
+      playNote(466.16, now + 2.0, shortNote); // Bb
+      playNote(392, now + 2.2, 0.6); // G (longer)
+
+      // Confetti animation
+      const duration = 3000; // 3 seconds
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 2000 };
+
+      function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        
+        confetti(Object.assign({}, defaults, { 
+          particleCount, 
+          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } 
+        }));
+        confetti(Object.assign({}, defaults, { 
+          particleCount, 
+          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } 
+        }));
+      }, 250);
+    });
+
     // Load items on page load
     loadItems();
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 </body>
 </html>
