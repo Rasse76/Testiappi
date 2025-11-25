@@ -63,7 +63,7 @@ app.get('/api/items/:id', (req, res) => {
 // Add a new item
 app.post('/api/items', (req, res) => {
   try {
-    const { name, description, quantity, price } = req.body;
+    const { name, description, quantity, price, image_url } = req.body;
     
     if (!name || name.trim() === '') {
       return res.status(400).json({ error: 'Name is required' });
@@ -74,8 +74,8 @@ app.post('/api/items', (req, res) => {
     
     const db = getDatabase();
     const result = db.prepare(
-      'INSERT INTO items (name, description, quantity, price) VALUES (?, ?, ?, ?)'
-    ).run(name.trim(), description || '', sanitizedQuantity, sanitizedPrice);
+      'INSERT INTO items (name, description, quantity, price, image_url) VALUES (?, ?, ?, ?, ?)'
+    ).run(name.trim(), description || '', sanitizedQuantity, sanitizedPrice, image_url || null);
     
     const newItem = db.prepare('SELECT * FROM items WHERE id = ?').get(result.lastInsertRowid);
     res.status(201).json(newItem);
@@ -91,7 +91,7 @@ app.put('/api/items/:id', (req, res) => {
       return res.status(400).json({ error: 'Invalid item ID' });
     }
     
-    const { name, description, quantity, price } = req.body;
+    const { name, description, quantity, price, image_url } = req.body;
     const db = getDatabase();
     const itemId = parseInt(req.params.id, 10);
     
@@ -108,8 +108,8 @@ app.put('/api/items/:id', (req, res) => {
     const sanitizedPrice = sanitizeNumber(price, 0);
     
     db.prepare(
-      'UPDATE items SET name = ?, description = ?, quantity = ?, price = ? WHERE id = ?'
-    ).run(name.trim(), description || '', sanitizedQuantity, sanitizedPrice, itemId);
+      'UPDATE items SET name = ?, description = ?, quantity = ?, price = ?, image_url = ? WHERE id = ?'
+    ).run(name.trim(), description || '', sanitizedQuantity, sanitizedPrice, image_url || null, itemId);
     
     const updatedItem = db.prepare('SELECT * FROM items WHERE id = ?').get(itemId);
     res.json(updatedItem);

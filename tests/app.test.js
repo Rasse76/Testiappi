@@ -38,6 +38,7 @@ describe('Inventory API', () => {
       expect(item).toHaveProperty('description');
       expect(item).toHaveProperty('quantity');
       expect(item).toHaveProperty('price');
+      expect(item).toHaveProperty('image_url');
     });
   });
 

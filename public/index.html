@@ -308,8 +308,8 @@
 </head>
 <body>
   <header>
-    <h1>📦 Inventory Management</h1>
-    <p>Manage your sales items with ease</p>
+    <h1>🎣 Rassen Kalastustarvike</h1>
+    <p>Inventaariohallinta kalastusvälineille</p>
   </header>
 
   <div class="container">
@@ -318,57 +318,62 @@
     <div class="stats">
       <div class="stat-card">
         <h3 id="totalItems">0</h3>
-        <p>Total Items</p>
+        <p>Tuotteita yhteensä</p>
       </div>
       <div class="stat-card">
         <h3 id="totalQuantity">0</h3>
-        <p>Total Quantity</p>
+        <p>Määrä yhteensä</p>
       </div>
       <div class="stat-card">
         <h3 id="totalValue">$0</h3>
-        <p>Total Value</p>
+        <p>Arvo yhteensä</p>
       </div>
     </div>
 
     <div class="card">
-      <h2>➕ Add New Item</h2>
+      <h2>➕ Lisää uusi tuote</h2>
       <form id="addItemForm">
         <div class="form-grid">
           <div class="form-group">
-            <label for="name">Item Name *</label>
-            <input type="text" id="name" name="name" required placeholder="Enter item name">
+            <label for="name">Tuotteen nimi *</label>
+            <input type="text" id="name" name="name" required placeholder="Kirjoita tuotteen nimi">
           </div>
           <div class="form-group">
-            <label for="quantity">Quantity</label>
+            <label for="quantity">Määrä</label>
             <input type="number" id="quantity" name="quantity" min="0" value="0" placeholder="0">
           </div>
           <div class="form-group">
-            <label for="price">Price ($)</label>
+            <label for="price">Hinta ($)</label>
             <input type="number" id="price" name="price" min="0" step="0.01" value="0" placeholder="0.00">
           </div>
         </div>
-        <div class="form-group" style="margin-bottom: 20px;">
-          <label for="description">Description</label>
-          <textarea id="description" name="description" rows="2" placeholder="Enter item description"></textarea>
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label for="description">Kuvaus</label>
+          <textarea id="description" name="description" rows="2" placeholder="Kirjoita tuotteen kuvaus"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Add Item</button>
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label for="imageUrl">Kuvan URL</label>
+          <input type="text" id="imageUrl" name="imageUrl" placeholder="/images/kuva.svg">
+        </div>
+        <button type="submit" class="btn btn-primary">Lisää tuote</button>
       </form>
     </div>
 
     <div class="card">
-      <h2>📋 Inventory Items</h2>
+      <h2>📋 Inventaarion tuotteet</h2>
       <div class="search-box">
-        <input type="text" id="searchInput" placeholder="🔍 Search items...">
+        <input type="text" id="searchInput" placeholder="🔍 Hae tuotteita...">
       </div>
       <div id="itemsContainer">
         <table id="itemsTable">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Quantity</th>
-              <th>Price</th>
-              <th>Actions</th>
+              <th>Kuva</th>
+              <th>Nimi</th>
+              <th>Kuvaus</th>
+              <th>Määrä</th>
+              <th>Hinta</th>
+              <th>Toiminnot</th>
             </tr>
           </thead>
           <tbody id="itemsBody">
@@ -382,32 +387,36 @@
   <div id="editModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>✏️ Edit Item</h2>
+        <h2>✏️ Muokkaa tuotetta</h2>
         <button class="close-btn" onclick="closeEditModal()">&times;</button>
       </div>
       <form id="editItemForm">
         <input type="hidden" id="editId">
         <div class="form-group" style="margin-bottom: 15px;">
-          <label for="editName">Item Name *</label>
+          <label for="editName">Tuotteen nimi *</label>
           <input type="text" id="editName" required>
         </div>
         <div class="form-group" style="margin-bottom: 15px;">
-          <label for="editDescription">Description</label>
+          <label for="editDescription">Kuvaus</label>
           <textarea id="editDescription" rows="3"></textarea>
         </div>
         <div class="form-grid">
           <div class="form-group">
-            <label for="editQuantity">Quantity</label>
+            <label for="editQuantity">Määrä</label>
             <input type="number" id="editQuantity" min="0">
           </div>
           <div class="form-group">
-            <label for="editPrice">Price ($)</label>
+            <label for="editPrice">Hinta ($)</label>
             <input type="number" id="editPrice" min="0" step="0.01">
           </div>
         </div>
+        <div class="form-group" style="margin-top: 15px;">
+          <label for="editImageUrl">Kuvan URL</label>
+          <input type="text" id="editImageUrl" placeholder="/images/kuva.svg">
+        </div>
         <div style="display: flex; gap: 10px; margin-top: 20px;">
-          <button type="submit" class="btn btn-primary">Save Changes</button>
-          <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Tallenna muutokset</button>
+          <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Peruuta</button>
         </div>
       </form>
     </div>
@@ -424,7 +433,7 @@
         displayItems(items);
         updateStats();
       } catch (error) {
-        showAlert('Failed to load items', 'error');
+        showAlert('Tuotteiden lataaminen epäonnistui', 'error');
       }
     }
 
@@ -435,8 +444,8 @@
       if (itemsToDisplay.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="5" class="empty-state">
-              <p>No items found. Add your first item above!</p>
+            <td colspan="6" class="empty-state">
+              <p>Tuotteita ei löytynyt. Lisää ensimmäinen tuote ylhäällä!</p>
             </td>
           </tr>
         `;
@@ -445,13 +454,18 @@
 
       tbody.innerHTML = itemsToDisplay.map(item => `
         <tr>
+          <td>
+            ${item.image_url 
+              ? `<img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.name)}" style="width: 50px; height: 50px; object-fit: contain;">` 
+              : '<span style="color: #ccc;">📷</span>'}
+          </td>
           <td><strong>${escapeHtml(item.name)}</strong></td>
           <td>${escapeHtml(item.description || '-')}</td>
           <td>${item.quantity}</td>
           <td>$${Number(item.price).toFixed(2)}</td>
           <td class="actions">
-            <button class="btn btn-primary btn-sm" onclick="openEditModal(${item.id})">Edit</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">Delete</button>
+            <button class="btn btn-primary btn-sm" onclick="openEditModal(${item.id})">Muokkaa</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">Poista</button>
           </td>
         </tr>
       `).join('');
@@ -476,7 +490,8 @@
         name: document.getElementById('name').value,
         description: document.getElementById('description').value,
         quantity: parseInt(document.getElementById('quantity').value) || 0,
-        price: parseFloat(document.getElementById('price').value) || 0
+        price: parseFloat(document.getElementById('price').value) || 0,
+        image_url: document.getElementById('imageUrl').value || null
       };
 
       try {
@@ -487,33 +502,33 @@
         });
 
         if (response.ok) {
-          showAlert('Item added successfully!', 'success');
+          showAlert('Tuote lisätty onnistuneesti!', 'success');
           document.getElementById('addItemForm').reset();
           loadItems();
         } else {
           const error = await response.json();
-          showAlert(error.error || 'Failed to add item', 'error');
+          showAlert(error.error || 'Tuotteen lisääminen epäonnistui', 'error');
         }
       } catch (error) {
-        showAlert('Failed to add item', 'error');
+        showAlert('Tuotteen lisääminen epäonnistui', 'error');
       }
     });
 
     // Delete item
     async function deleteItem(id) {
-      if (!confirm('Are you sure you want to delete this item?')) return;
+      if (!confirm('Haluatko varmasti poistaa tämän tuotteen?')) return;
 
       try {
         const response = await fetch(`/api/items/${id}`, { method: 'DELETE' });
         
         if (response.ok) {
-          showAlert('Item deleted successfully!', 'success');
+          showAlert('Tuote poistettu onnistuneesti!', 'success');
           loadItems();
         } else {
-          showAlert('Failed to delete item', 'error');
+          showAlert('Tuotteen poistaminen epäonnistui', 'error');
         }
       } catch (error) {
-        showAlert('Failed to delete item', 'error');
+        showAlert('Tuotteen poistaminen epäonnistui', 'error');
       }
     }
 
@@ -527,6 +542,7 @@
       document.getElementById('editDescription').value = item.description || '';
       document.getElementById('editQuantity').value = item.quantity;
       document.getElementById('editPrice').value = item.price;
+      document.getElementById('editImageUrl').value = item.image_url || '';
       
       document.getElementById('editModal').classList.add('active');
     }
@@ -544,7 +560,8 @@
         name: document.getElementById('editName').value,
         description: document.getElementById('editDescription').value,
         quantity: parseInt(document.getElementById('editQuantity').value) || 0,
-        price: parseFloat(document.getElementById('editPrice').value) || 0
+        price: parseFloat(document.getElementById('editPrice').value) || 0,
+        image_url: document.getElementById('editImageUrl').value || null
       };
 
       try {
@@ -555,15 +572,15 @@
         });
 
         if (response.ok) {
-          showAlert('Item updated successfully!', 'success');
+          showAlert('Tuote päivitetty onnistuneesti!', 'success');
           closeEditModal();
           loadItems();
         } else {
           const error = await response.json();
-          showAlert(error.error || 'Failed to update item', 'error');
+          showAlert(error.error || 'Tuotteen päivittäminen epäonnistui', 'error');
         }
       } catch (error) {
-        showAlert('Failed to update item', 'error');
+        showAlert('Tuotteen päivittäminen epäonnistui', 'error');
       }
     });
 
