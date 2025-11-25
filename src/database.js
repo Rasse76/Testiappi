@@ -29,16 +29,11 @@ function initializeDatabase(dbPath = path.join(__dirname, '..', 'inventory.db'))
 
 function seedDatabase() {
   const testItems = [
-    { name: 'Laptop', description: 'Dell XPS 15 inch laptop', quantity: 10, price: 1299.99 },
-    { name: 'Mouse', description: 'Wireless Logitech mouse', quantity: 50, price: 29.99 },
-    { name: 'Keyboard', description: 'Mechanical gaming keyboard', quantity: 30, price: 79.99 },
-    { name: 'Monitor', description: '27 inch 4K display', quantity: 15, price: 449.99 },
-    { name: 'Headphones', description: 'Noise-cancelling wireless headphones', quantity: 25, price: 199.99 },
-    { name: 'USB Hub', description: '7-port USB 3.0 hub', quantity: 40, price: 24.99 },
-    { name: 'Webcam', description: '1080p HD webcam', quantity: 20, price: 59.99 },
-    { name: 'Desk Lamp', description: 'LED desk lamp with adjustable brightness', quantity: 35, price: 34.99 },
-    { name: 'Chair', description: 'Ergonomic office chair', quantity: 8, price: 299.99 },
-    { name: 'Desk Mat', description: 'Large leather desk mat', quantity: 45, price: 19.99 }
+    { name: 'Fishing Rod', description: 'Carbon fiber spinning rod, 7ft medium action', quantity: 25, price: 89.99 },
+    { name: 'Tackle Box', description: 'Waterproof tackle box with 3 trays', quantity: 40, price: 34.99 },
+    { name: 'Fishing Reel', description: 'Baitcasting reel with 7:1 gear ratio', quantity: 30, price: 129.99 },
+    { name: 'Fishing Line', description: 'Braided fishing line, 300 yards, 20lb test', quantity: 100, price: 24.99 },
+    { name: 'Lure Kit', description: 'Assorted bass lures, 50 piece set', quantity: 50, price: 45.99 }
   ];
 
   const insert = db.prepare('INSERT INTO items (name, description, quantity, price) VALUES (?, ?, ?, ?)');
