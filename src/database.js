@@ -30,11 +30,11 @@ function initializeDatabase(dbPath = path.join(__dirname, '..', 'inventory.db'))
 
 function seedDatabase() {
   const testItems = [
-    { name: 'Fishing Rod', description: 'Carbon fiber spinning rod, 7ft medium action', quantity: 25, price: 89.99, image_url: '/images/fishing-rod.svg' },
-    { name: 'Tackle Box', description: 'Waterproof tackle box with 3 trays', quantity: 40, price: 34.99, image_url: '/images/tackle-box.svg' },
-    { name: 'Fishing Reel', description: 'Baitcasting reel with 7:1 gear ratio', quantity: 30, price: 129.99, image_url: '/images/fishing-reel.svg' },
-    { name: 'Fishing Line', description: 'Braided fishing line, 300 yards, 20lb test', quantity: 100, price: 24.99, image_url: '/images/fishing-line.svg' },
-    { name: 'Lure Kit', description: 'Assorted bass lures, 50 piece set', quantity: 50, price: 45.99, image_url: '/images/lure-kit.svg' }
+    { name: 'Fishing Rod', description: 'Carbon fiber spinning rod, 7ft medium action', quantity: 25, price: 89.99, image_url: 'https://img.icons8.com/color/96/fishing-rod.png' },
+    { name: 'Tackle Box', description: 'Waterproof tackle box with 3 trays', quantity: 40, price: 34.99, image_url: 'https://img.icons8.com/color/96/tackle-box.png' },
+    { name: 'Fishing Reel', description: 'Baitcasting reel with 7:1 gear ratio', quantity: 30, price: 129.99, image_url: 'https://img.icons8.com/color/96/fishing-reel.png' },
+    { name: 'Fishing Line', description: 'Braided fishing line, 300 yards, 20lb test', quantity: 100, price: 24.99, image_url: 'https://img.icons8.com/color/96/fishing-line.png' },
+    { name: 'Lure Kit', description: 'Assorted bass lures, 50 piece set', quantity: 50, price: 45.99, image_url: 'https://img.icons8.com/color/96/fishing-lure.png' }
   ];
 
   const insert = db.prepare('INSERT INTO items (name, description, quantity, price, image_url) VALUES (?, ?, ?, ?, ?)');

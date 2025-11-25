@@ -35,11 +35,24 @@ function sanitizeImageUrl(url) {
   if (!url || typeof url !== 'string') return null;
   const trimmed = url.trim();
   if (trimmed === '') return null;
-  // Only allow relative paths starting with / or valid http/https URLs
+  // Allow relative paths starting with /
   if (trimmed.startsWith('/')) {
     // Validate relative path - only allow alphanumeric, hyphens, underscores, dots, and slashes
     if (/^\/[a-zA-Z0-9/_.-]+$/.test(trimmed)) {
       return trimmed;
+    }
+  }
+  // Allow https URLs from trusted domains
+  if (trimmed.startsWith('https://')) {
+    try {
+      const urlObj = new URL(trimmed);
+      // Allow trusted image hosting domains
+      const trustedDomains = ['img.icons8.com', 'icons8.com', 'upload.wikimedia.org', 'commons.wikimedia.org'];
+      if (trustedDomains.includes(urlObj.hostname)) {
+        return trimmed;
+      }
+    } catch (e) {
+      return null;
     }
   }
   return null;
