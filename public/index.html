@@ -490,7 +490,7 @@
       container.innerHTML = itemsToDisplay.map(item => `
         <div class="item-box" data-id="${item.id}">
           <div class="item-name">${escapeHtml(item.name)}</div>
-          <div class="item-description">${escapeHtml(item.description || 'No description')}</div>
+          <div class="item-description">${escapeHtml(item.description || '-')}</div>
           <div class="item-details">
             <div class="item-detail">
               <div class="item-detail-label">Quantity</div>
