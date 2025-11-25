@@ -132,31 +132,85 @@
       font-size: 0.9rem;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
       margin-top: 10px;
     }
 
-    th, td {
-      padding: 15px;
-      text-align: left;
+    .item-box {
+      background: #fff;
+      border-radius: 10px;
+      border: 2px solid #e0e0e0;
+      padding: 20px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .item-box:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .item-box:active {
+      transform: translateY(0);
+    }
+
+    .item-box .item-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+      word-break: break-word;
+    }
+
+    .item-box .item-description {
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 15px;
+      min-height: 40px;
+      word-break: break-word;
+    }
+
+    .item-box .item-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 10px 0;
+      border-top: 1px solid #e0e0e0;
       border-bottom: 1px solid #e0e0e0;
     }
 
-    th {
-      background: #f8f9fa;
+    .item-box .item-detail {
+      text-align: center;
+    }
+
+    .item-box .item-detail-label {
+      font-size: 0.8rem;
+      color: #888;
+      text-transform: uppercase;
+    }
+
+    .item-box .item-detail-value {
+      font-size: 1.1rem;
       font-weight: 600;
-      color: #555;
+      color: #667eea;
     }
 
-    tr:hover {
-      background: #f8f9fa;
-    }
-
-    .actions {
+    .item-box .actions {
       display: flex;
-      gap: 8px;
+      gap: 10px;
+      justify-content: stretch;
+    }
+
+    .item-box .actions .btn {
+      flex: 1;
+      text-align: center;
+      padding: 12px 15px;
+      min-height: 44px;
     }
 
     .empty-state {
@@ -292,12 +346,16 @@
     }
 
     @media (max-width: 768px) {
-      .actions {
+      .items-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .item-box .actions {
         flex-direction: column;
       }
 
-      th, td {
-        padding: 10px;
+      .item-box .actions .btn {
+        width: 100%;
       }
 
       .form-grid {
@@ -360,20 +418,8 @@
       <div class="search-box">
         <input type="text" id="searchInput" placeholder="🔍 Search items...">
       </div>
-      <div id="itemsContainer">
-        <table id="itemsTable">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Quantity</th>
-              <th>Price</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="itemsBody">
-          </tbody>
-        </table>
+      <div id="itemsContainer" class="items-grid">
+        <!-- Items will be populated here -->
       </div>
     </div>
   </div>
@@ -428,32 +474,38 @@
       }
     }
 
-    // Display items in table
+    // Display items as cards/boxes
     function displayItems(itemsToDisplay) {
-      const tbody = document.getElementById('itemsBody');
+      const container = document.getElementById('itemsContainer');
       
       if (itemsToDisplay.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="5" class="empty-state">
-              <p>No items found. Add your first item above!</p>
-            </td>
-          </tr>
+        container.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <p>No items found. Add your first item above!</p>
+          </div>
         `;
         return;
       }
 
-      tbody.innerHTML = itemsToDisplay.map(item => `
-        <tr>
-          <td><strong>${escapeHtml(item.name)}</strong></td>
-          <td>${escapeHtml(item.description || '-')}</td>
-          <td>${item.quantity}</td>
-          <td>$${Number(item.price).toFixed(2)}</td>
-          <td class="actions">
-            <button class="btn btn-primary btn-sm" onclick="openEditModal(${item.id})">Edit</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">Delete</button>
-          </td>
-        </tr>
+      container.innerHTML = itemsToDisplay.map(item => `
+        <div class="item-box" data-id="${item.id}">
+          <div class="item-name">${escapeHtml(item.name)}</div>
+          <div class="item-description">${escapeHtml(item.description || '-')}</div>
+          <div class="item-details">
+            <div class="item-detail">
+              <div class="item-detail-label">Quantity</div>
+              <div class="item-detail-value">${item.quantity}</div>
+            </div>
+            <div class="item-detail">
+              <div class="item-detail-label">Price</div>
+              <div class="item-detail-value">$${Number(item.price).toFixed(2)}</div>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" onclick="openEditModal(${item.id})">✏️ Edit</button>
+            <button class="btn btn-danger" onclick="deleteItem(${item.id})">🗑️ Delete</button>
+          </div>
+        </div>
       `).join('');
     }
 
