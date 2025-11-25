@@ -31,6 +31,20 @@ function sanitizeNumber(value, defaultValue = 0) {
   return num;
 }
 
+function sanitizeImageUrl(url) {
+  if (!url || typeof url !== 'string') return null;
+  const trimmed = url.trim();
+  if (trimmed === '') return null;
+  // Only allow relative paths starting with / or valid http/https URLs
+  if (trimmed.startsWith('/')) {
+    // Validate relative path - only allow alphanumeric, hyphens, underscores, dots, and slashes
+    if (/^\/[a-zA-Z0-9/_.-]+$/.test(trimmed)) {
+      return trimmed;
+    }
+  }
+  return null;
+}
+
 // Get all items
 app.get('/api/items', (req, res) => {
   try {
@@ -71,11 +85,12 @@ app.post('/api/items', (req, res) => {
     
     const sanitizedQuantity = Math.floor(sanitizeNumber(quantity, 0));
     const sanitizedPrice = sanitizeNumber(price, 0);
+    const sanitizedImageUrl = sanitizeImageUrl(image_url);
     
     const db = getDatabase();
     const result = db.prepare(
       'INSERT INTO items (name, description, quantity, price, image_url) VALUES (?, ?, ?, ?, ?)'
-    ).run(name.trim(), description || '', sanitizedQuantity, sanitizedPrice, image_url || null);
+    ).run(name.trim(), description || '', sanitizedQuantity, sanitizedPrice, sanitizedImageUrl);
     
     const newItem = db.prepare('SELECT * FROM items WHERE id = ?').get(result.lastInsertRowid);
     res.status(201).json(newItem);
@@ -106,10 +121,11 @@ app.put('/api/items/:id', (req, res) => {
     
     const sanitizedQuantity = Math.floor(sanitizeNumber(quantity, 0));
     const sanitizedPrice = sanitizeNumber(price, 0);
+    const sanitizedImageUrl = sanitizeImageUrl(image_url);
     
     db.prepare(
       'UPDATE items SET name = ?, description = ?, quantity = ?, price = ?, image_url = ? WHERE id = ?'
-    ).run(name.trim(), description || '', sanitizedQuantity, sanitizedPrice, image_url || null, itemId);
+    ).run(name.trim(), description || '', sanitizedQuantity, sanitizedPrice, sanitizedImageUrl, itemId);
     
     const updatedItem = db.prepare('SELECT * FROM items WHERE id = ?').get(itemId);
     res.json(updatedItem);
